@@ -1,10 +1,10 @@
 package main 
 import(
 "log"
-"github.com/biswarupadhikari/godb"
+"github.com/biswarupadhikari/gomysql"
 )
 func main() {
-	db:=new(godb.GoDB)
-	db.Connect("root","rootwdp","go")
+	db:=gomysql.Connect("root","rootwdp","go")
+	db.Select("id,username,email")
 	log.Println("HI",db)
 }
