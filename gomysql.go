@@ -12,8 +12,8 @@ import (
  */
 type GoMysql struct {
 	db              *sql.DB
-	fields          []string
 	tableName       string
+	fields          []string
 	conditions      []string
 	dataValues      []interface{}
 	conditionValues []interface{}
@@ -203,5 +203,14 @@ func (gomysql *GoMysql) Update(data map[string]interface{}) {
 		gomysql.dataValues = append(gomysql.dataValues, fieldValue)
 	}
 	sql := gomysql.generateUpdateSQL()
+	stmtIns, err := gomysql.db.Prepare(sql)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmtIns.Close()
+	_, err = stmtIns.Exec(gomysql.GetMappedValues()...)
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.Println(sql, gomysql.GetMappedValues())
 }
