@@ -1,4 +1,4 @@
-package GoMysql
+package gomysql
 import(
 "log"
 "strings"
