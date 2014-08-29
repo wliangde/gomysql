@@ -11,11 +11,11 @@ import (
  * GoMysql Structure
  */
 type GoMysql struct {
-	db         *sql.DB
-	fields     []string
-	tableName  string
-	conditions []string
-  dataValues []interface{}
+	db              *sql.DB
+	fields          []string
+	tableName       string
+	conditions      []string
+	dataValues      []interface{}
 	conditionValues []interface{}
 }
 
@@ -131,34 +131,36 @@ func (gomysql *GoMysql) generateInsertSQL() string {
 	sql += " VALUES(" + placeholders + ")"
 	return sql
 }
+
 /**
  * Generate Update SQL Query
  */
 func (gomysql *GoMysql) generateUpdateSQL() string {
-  var sql string
-  var fieldMaping string
-  sql += "UPDATE " + gomysql.tableName + " SET "
-  for _, field := range gomysql.fields {
-    fieldMaping +=field+"=?," 
-  }
-  fieldMaping=strings.TrimRight(fieldMaping,",")
-  sql+=fieldMaping
-  if len(gomysql.conditions) > 0 {
-    sql += " WHERE " + strings.Join(gomysql.conditions, " ")
-  }
-  return sql
+	var sql string
+	var fieldMaping string
+	sql += "UPDATE " + gomysql.tableName + " SET "
+	for _, field := range gomysql.fields {
+		fieldMaping += field + "=?,"
+	}
+	fieldMaping = strings.TrimRight(fieldMaping, ",")
+	sql += fieldMaping
+	if len(gomysql.conditions) > 0 {
+		sql += " WHERE " + strings.Join(gomysql.conditions, " ")
+	}
+	return sql
 }
-func (gomysql *GoMysql) GetMappedValues()[]interface{} {
-  values:=make([]interface{},0)
-  for _, value := range gomysql.dataValues {
-     values=append(values,value)
-  }
-  for _, value := range gomysql.conditionValues {
-     values=append(values,value)
-  }
+func (gomysql *GoMysql) GetMappedValues() []interface{} {
+	values := make([]interface{}, 0)
+	for _, value := range gomysql.dataValues {
+		values = append(values, value)
+	}
+	for _, value := range gomysql.conditionValues {
+		values = append(values, value)
+	}
 
-  return values
+	return values
 }
+
 /**
  * Get Records
  */
@@ -180,16 +182,17 @@ func (gomysql *GoMysql) Insert(data map[string]interface{}) {
 	sql := gomysql.generateInsertSQL()
 	log.Println(sql, gomysql.dataValues)
 }
+
 /**
  * Update Data
  */
 func (gomysql *GoMysql) Update(data map[string]interface{}) {
-  var fieldName string
-  var fieldValue interface{}
-  for fieldName, fieldValue = range data {
-    gomysql.fields = append(gomysql.fields, fieldName)
-    gomysql.dataValues = append(gomysql.dataValues, fieldValue)
-  }
-  sql := gomysql.generateUpdateSQL()
-  log.Println(sql, gomysql.GetMappedValues())
+	var fieldName string
+	var fieldValue interface{}
+	for fieldName, fieldValue = range data {
+		gomysql.fields = append(gomysql.fields, fieldName)
+		gomysql.dataValues = append(gomysql.dataValues, fieldValue)
+	}
+	sql := gomysql.generateUpdateSQL()
+	log.Println(sql, gomysql.GetMappedValues())
 }
