@@ -29,9 +29,14 @@ func main() {
 	/**
 	 * Update Table
 	 */
-	data := make(map[string]interface{})
+	// data := make(map[string]interface{})
 
-	data["username"] = "samirgoswami Modified"
-	data["password"] = "samirgoswami pass Modified"
-	db.Table("users").Where("username", "=", "samirgoswami").Update(data)
+	// data["username"] = "samirgoswami Modified"
+	// data["password"] = "samirgoswami pass Modified"
+	// db.Table("users").Where("username", "=", "samirgoswami").Update(data)
+
+	/**
+	 * Delete Records
+	 */
+	db.Table("users").Where("id", "=", 155).Delete()
 }

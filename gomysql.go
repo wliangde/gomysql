@@ -149,6 +149,23 @@ func (gomysql *GoMysql) generateUpdateSQL() string {
 	}
 	return sql
 }
+
+/**
+ * Generate Delete SQL Query
+ */
+func (gomysql *GoMysql) generateDeleteSQL() string {
+	var sql string
+	sql += "DELETE FROM " + gomysql.tableName
+	if len(gomysql.conditions) > 0 {
+		sql += " WHERE " + strings.Join(gomysql.conditions, " ")
+	}
+
+	return sql
+}
+
+/**
+ *Get Combined DataValues and Condtion Mapped Values
+ */
 func (gomysql *GoMysql) GetMappedValues() []interface{} {
 	values := make([]interface{}, 0)
 	for _, value := range gomysql.dataValues {
@@ -203,6 +220,23 @@ func (gomysql *GoMysql) Update(data map[string]interface{}) {
 		gomysql.dataValues = append(gomysql.dataValues, fieldValue)
 	}
 	sql := gomysql.generateUpdateSQL()
+	stmtIns, err := gomysql.db.Prepare(sql)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmtIns.Close()
+	_, err = stmtIns.Exec(gomysql.GetMappedValues()...)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(sql, gomysql.GetMappedValues())
+}
+
+/**
+ * Delete Records From Mysql DataBase Table
+ */
+func (gomysql *GoMysql) Delete() {
+	sql := gomysql.generateDeleteSQL()
 	stmtIns, err := gomysql.db.Prepare(sql)
 	if err != nil {
 		log.Fatal(err)
