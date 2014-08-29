@@ -180,6 +180,15 @@ func (gomysql *GoMysql) Insert(data map[string]interface{}) {
 		gomysql.dataValues = append(gomysql.dataValues, fieldValue)
 	}
 	sql := gomysql.generateInsertSQL()
+	stmtIns, err := gomysql.db.Prepare(sql)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmtIns.Close()
+	_, err = stmtIns.Exec(gomysql.GetMappedValues()...)
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.Println(sql, gomysql.dataValues)
 }
 

@@ -20,18 +20,18 @@ func main() {
 	/**
 	 * Insert Record
 	 */
-	// data:=make(map[string]interface{})
+	data := make(map[string]interface{})
 
-	// data["username"]="joyantak"
-	// data["password"]="ttttt"
-	// db.Table("users").Insert(data)
+	data["username"] = "samirgoswami"
+	data["password"] = "9514753"
+	db.Table("users").Insert(data)
 
 	/**
 	 * Update Table
 	 */
-	data := make(map[string]interface{})
+	// data := make(map[string]interface{})
 
-	data["username"] = "new Username"
-	data["password"] = "new Password"
-	db.Table("users").Where("id", "=", 25).Update(data)
+	// data["username"] = "new Username"
+	// data["password"] = "new Password"
+	// db.Table("users").Where("id", "=", 25).Update(data)
 }
