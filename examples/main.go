@@ -1,8 +1,8 @@
 package main
 
 import (
-	//"log"
 	"github.com/biswarupadhikari/gomysql"
+	"log"
 )
 
 func main() {
@@ -38,5 +38,10 @@ func main() {
 	/**
 	 * Delete Records
 	 */
-	db.Table("users").Where("id", "=", 155).Delete()
+	// db.Table("users").Where("id", "=", 155).Delete()
+	/**
+	 * Select All Records
+	 */
+	rows := db.Select("id,username,password").From("users").Where("id", ">", 7).Get()
+	log.Println(rows)
 }
