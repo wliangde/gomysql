@@ -103,13 +103,32 @@ func main() {
 	/**
 	 * Get Last Insert ID
 	 */
+	// query := db.GetQuery()
+	// query.Table("users")
+	// data := make(map[string]interface{})
+	// data["username"] = "anothertestuser344"
+	// data["password"] = "xxxxx"
+	// result := query.Insert(data)
+	// newId, _ := result.LastInsertId()
+	// log.Println("Last Insert Id Is", newId)
+	/**
+	 * Get Affected Rows after Update
+	 */
+	// query:=db.GetQuery()
+	// query.Table("users")
+	// query.Where("id",">",6)
+	// data:=make(map[string]interface{})
+	// data["password"]="tgyhuj"
+	// result:=query.Update(data)
+	// affectedRows,_:=result.RowsAffected()
+	// log.Println("Affected Rows",affectedRows)
+	/**
+	 * Get Affected Rows after Delete
+	 */
 	query := db.GetQuery()
 	query.Table("users")
-	data := make(map[string]interface{})
-	data["username"] = "anothertestuser344"
-	data["password"] = "xxxxx"
-	result := query.Insert(data)
-	newId, _ := result.LastInsertId()
-	log.Println("Last Insert Id Is", newId)
-
+	query.Where("id", ">=", 158)
+	result := query.Delete()
+	affectedRows, _ := result.RowsAffected()
+	log.Println("Affected Rows", affectedRows)
 }

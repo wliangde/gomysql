@@ -19,6 +19,7 @@ type GoMysql struct {
 	dataValues      []interface{}
 	conditionValues []interface{}
 	joinDataValues  []interface{}
+	lastResult      sql.Result
 }
 
 /**
@@ -297,6 +298,7 @@ func (gomysql *GoMysql) Insert(data map[string]interface{}) sql.Result {
 	if err != nil {
 		log.Fatal(err)
 	}
+	gomysql.lastResult = result
 	//log.Println(sqlQuery, gomysql.dataValues)
 	return result
 }
@@ -337,6 +339,7 @@ func (gomysql *GoMysql) Update(data map[string]interface{}) sql.Result {
 	if err != nil {
 		log.Fatal(err)
 	}
+	gomysql.lastResult = result
 	return result
 }
 
@@ -370,6 +373,7 @@ func (gomysql *GoMysql) Delete() sql.Result {
 	if err != nil {
 		log.Fatal(err)
 	}
+	gomysql.lastResult = result
 	//log.Println(sqlQuery, gomysql.GetMappedValues())
 	return result
 }
