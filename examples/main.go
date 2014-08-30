@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	log.Println("GoMysql Testing App")
 	db := gomysql.Connect("root", "rootwdp", "go")
 	/**
 	 * Select Records
@@ -42,6 +43,61 @@ func main() {
 	/**
 	 * Select All Records
 	 */
-	rows := db.Select("id,username,password").From("users").Where("id", ">", 7).Get()
-	log.Println(rows)
+	// rows := db.Select("id,username,password").From("users").Where("id", ">", 7).Get()
+	// log.Println(rows)
+	// log.Println(db.Select("id").Get())
+	// //log.Println(db.Get())
+	// //log.Println(db.Get())
+	/**
+	 * Left Join
+	//  */
+	// query := db.GetQuery()
+	// query.Select("*")
+	// query.From("users as u")
+	// query.Join("LEFT", "roles as r", "u.role_id=r.id")
+	// rows := query.Get()
+	// log.Println(rows)
+	/**
+	 * Left Join With Condition
+	 */
+
+	// query := db.GetQuery()
+	// query.Select("*")
+	// query.From("users as u")
+	// query.Join("LEFT", "roles as r", "u.role_id=r.id AND u.id>?",7)
+	// query.Where("u.username","=","biswarupadhikari")
+	// sql,params:=query.GetSQL()
+	// log.Println(sql,params)
+	//
+	/**
+	 * Get Insert SQL
+	 */
+	// query:=db.GetQuery()
+	// query.Table("users")
+	// data:=make(map[string]interface{})
+	// data["username"]="asdas"
+	// data["password"]="xxxxx"
+	// sql,params:=query.InsertSQL(data)
+	// log.Println(sql,params)
+	/**
+	  * Get Update SQL
+	//   */
+	// query:=db.GetQuery()
+	// query.Table("users")
+	// query.Where("id","=",9)
+	// query.Where("username","=","Biswu")
+	// data:=make(map[string]interface{})
+	// data["username"]="asdas"
+	// data["password"]="xxxxx"
+	// sql,params:=query.UpdateSQL(data)
+	// log.Println(sql,params)
+	/**
+	 * Get Delete SQL
+	 */
+	query := db.GetQuery()
+	query.Table("users")
+	query.Where("id", "=", 9)
+	query.Where("username", "=", "Biswu")
+	sql, params := query.DeleteSQL()
+	log.Println(sql, params)
 }

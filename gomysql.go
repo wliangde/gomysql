@@ -15,8 +15,10 @@ type GoMysql struct {
 	tableName       string
 	fields          []string
 	conditions      []string
+	joins           []string
 	dataValues      []interface{}
 	conditionValues []interface{}
+	joinDataValues  []interface{}
 }
 
 /**
@@ -67,7 +69,7 @@ func (gomysql *GoMysql) From(tableName string) *GoMysql {
  * Add AND Where Conditions
  */
 func (gomysql *GoMysql) Where(key string, operator string, dataValue interface{}) *GoMysql {
-	gomysql.applyCondition("`"+key+"`"+operator+" ?", " AND ")
+	gomysql.applyCondition(""+key+""+operator+" ?", " AND ")
 	gomysql.conditionValues = append(gomysql.conditionValues, dataValue)
 	return gomysql
 }
@@ -76,7 +78,7 @@ func (gomysql *GoMysql) Where(key string, operator string, dataValue interface{}
  * Add OR Where Conditions
  */
 func (gomysql *GoMysql) ORWhere(key string, operator string, dataValue interface{}) *GoMysql {
-	gomysql.applyCondition("`"+key+"`"+operator+" ?", " OR ")
+	gomysql.applyCondition(""+key+""+operator+" ?", " OR ")
 	gomysql.conditionValues = append(gomysql.conditionValues, dataValue)
 	return gomysql
 }
@@ -105,11 +107,26 @@ func (gomysql *GoMysql) applyCondition(condition string, operatorCondition strin
 }
 
 /**
+ * Join Query
+ */
+func (gomysql *GoMysql) Join(joinType string, joinTable string, joinCond string, joinDataValues ...interface{}) *GoMysql {
+	joinSQL := " " + joinType + " JOIN " + joinTable + " ON " + joinCond
+	for _, joinDataValue := range joinDataValues {
+		gomysql.joinDataValues = append(gomysql.joinDataValues, joinDataValue)
+	}
+	gomysql.joins = append(gomysql.joins, joinSQL)
+	return gomysql
+}
+
+/**
  * Generate Select SQL using Select Fields From Table and Condition
  */
 func (gomysql *GoMysql) generateSelectSQL() string {
 	var sqlQuery string
 	sqlQuery += "Select " + strings.Join(gomysql.fields, ",") + " FROM " + gomysql.tableName
+	if len(gomysql.joins) > 0 {
+		sqlQuery += " " + strings.Join(gomysql.joins, " ")
+	}
 	if len(gomysql.conditions) > 0 {
 		sqlQuery += " WHERE " + strings.Join(gomysql.conditions, " ")
 	}
@@ -168,9 +185,15 @@ func (gomysql *GoMysql) generateDeleteSQL() string {
  */
 func (gomysql *GoMysql) GetMappedValues() []interface{} {
 	values := make([]interface{}, 0)
+
 	for _, value := range gomysql.dataValues {
 		values = append(values, value)
 	}
+
+	for _, value := range gomysql.joinDataValues {
+		values = append(values, value)
+	}
+
 	for _, value := range gomysql.conditionValues {
 		values = append(values, value)
 	}
@@ -179,14 +202,37 @@ func (gomysql *GoMysql) GetMappedValues() []interface{} {
 }
 
 /**
+ * Reset Query Data
+ */
+func (gomysql *GoMysql) RessetQuery() {
+	gomysql.tableName = ""
+	gomysql.fields = make([]string, 0)
+	gomysql.conditions = make([]string, 0)
+	gomysql.joins = make([]string, 0)
+	gomysql.dataValues = make([]interface{}, 0)
+	gomysql.conditionValues = make([]interface{}, 0)
+	gomysql.joinDataValues = make([]interface{}, 0)
+}
+
+/**
+ * Get New Query Start New Query
+ */
+func (gomysql *GoMysql) GetQuery() *GoMysql {
+	gomysql.RessetQuery()
+	return gomysql
+}
+
+/**
  * Get Records
  */
 func (gomysql *GoMysql) Get() []map[string]interface{} {
-	item := make(map[string]interface{})
+	if gomysql.tableName == "" {
+		log.Fatal("Please Select Table Name")
+	}
 	items := make([]map[string]interface{}, 0)
 	sqlQuery := gomysql.generateSelectSQL()
-	log.Println(sqlQuery)
-	//return
+	log.Println(sqlQuery, gomysql.GetMappedValues())
+	//return items
 	rows, err := gomysql.db.Query(sqlQuery, gomysql.GetMappedValues()...)
 	if err != nil {
 		log.Fatal(err)
@@ -201,6 +247,7 @@ func (gomysql *GoMysql) Get() []map[string]interface{} {
 		scanArgs[i] = &values[i]
 	}
 	for rows.Next() {
+		item := make(map[string]interface{})
 		err = rows.Scan(scanArgs...)
 		if err != nil {
 			log.Fatal(err)
@@ -216,13 +263,24 @@ func (gomysql *GoMysql) Get() []map[string]interface{} {
 		}
 		items = append(items, item)
 	}
+	gomysql.RessetQuery()
 	return items
+}
+
+/**
+ * Get Sql Query
+ */
+func (gomysql *GoMysql) GetSQL() (string, []interface{}) {
+	return gomysql.generateSelectSQL(), gomysql.GetMappedValues()
 }
 
 /**
  * Insert Data Into Table Using Data
  */
 func (gomysql *GoMysql) Insert(data map[string]interface{}) {
+	if gomysql.tableName == "" {
+		log.Fatal("Please Select Table Name")
+	}
 	var fieldName string
 	var fieldValue interface{}
 	for fieldName, fieldValue = range data {
@@ -239,13 +297,29 @@ func (gomysql *GoMysql) Insert(data map[string]interface{}) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(sqlQuery, gomysql.dataValues)
+	//log.Println(sqlQuery, gomysql.dataValues)
+}
+
+/**
+ * Get Insert Sql Query
+ */
+func (gomysql *GoMysql) InsertSQL(data map[string]interface{}) (string, []interface{}) {
+	var fieldName string
+	var fieldValue interface{}
+	for fieldName, fieldValue = range data {
+		gomysql.fields = append(gomysql.fields, fieldName)
+		gomysql.dataValues = append(gomysql.dataValues, fieldValue)
+	}
+	return gomysql.generateInsertSQL(), gomysql.GetMappedValues()
 }
 
 /**
  * Update Data
  */
 func (gomysql *GoMysql) Update(data map[string]interface{}) {
+	if gomysql.tableName == "" {
+		log.Fatal("Please Select Table Name")
+	}
 	var fieldName string
 	var fieldValue interface{}
 	for fieldName, fieldValue = range data {
@@ -262,13 +336,29 @@ func (gomysql *GoMysql) Update(data map[string]interface{}) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(sqlQuery, gomysql.GetMappedValues())
+	//log.Println(sqlQuery, gomysql.GetMappedValues())
+}
+
+/**
+ * Get Insert Sql Query
+ */
+func (gomysql *GoMysql) UpdateSQL(data map[string]interface{}) (string, []interface{}) {
+	var fieldName string
+	var fieldValue interface{}
+	for fieldName, fieldValue = range data {
+		gomysql.fields = append(gomysql.fields, fieldName)
+		gomysql.dataValues = append(gomysql.dataValues, fieldValue)
+	}
+	return gomysql.generateUpdateSQL(), gomysql.GetMappedValues()
 }
 
 /**
  * Delete Records From Mysql DataBase Table
  */
 func (gomysql *GoMysql) Delete() {
+	if gomysql.tableName == "" {
+		log.Fatal("Please Select Table Name")
+	}
 	sqlQuery := gomysql.generateDeleteSQL()
 	stmtIns, err := gomysql.db.Prepare(sqlQuery)
 	if err != nil {
@@ -279,5 +369,12 @@ func (gomysql *GoMysql) Delete() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(sqlQuery, gomysql.GetMappedValues())
+	//log.Println(sqlQuery, gomysql.GetMappedValues())
+}
+
+/**
+ * Get Delete Sql Query
+ */
+func (gomysql *GoMysql) DeleteSQL() (string, []interface{}) {
+	return gomysql.generateDeleteSQL(), gomysql.GetMappedValues()
 }
