@@ -7,7 +7,7 @@ import (
 
 func main() {
 	log.Println("GoMysql Testing App")
-	db := gomysql.Connect("root", "rootwdp", "go")
+	db := gomysql.Connect("localhost", "root", "rootwdp", "go", "3306")
 	/**
 	 * Select Records
 	 */
