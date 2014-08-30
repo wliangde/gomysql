@@ -84,20 +84,32 @@ func main() {
 	//   */
 	// query:=db.GetQuery()
 	// query.Table("users")
-	// query.Where("id","=",9)
-	// query.Where("username","=","Biswu")
+	// query.Where("id","=",6)
 	// data:=make(map[string]interface{})
-	// data["username"]="asdas"
+	// data["username"]="asssssssdas"
 	// data["password"]="xxxxx"
 	// sql,params:=query.UpdateSQL(data)
 	// log.Println(sql,params)
 	/**
 	 * Get Delete SQL
 	 */
+	// query := db.GetQuery()
+	// query.Table("users")
+	// query.Where("id", "=", 9)
+	// query.Where("username", "=", "Biswu")
+	// sql, params := query.DeleteSQL()
+	// log.Println(sql, params)
+	//
+	/**
+	 * Get Last Insert ID
+	 */
 	query := db.GetQuery()
 	query.Table("users")
-	query.Where("id", "=", 9)
-	query.Where("username", "=", "Biswu")
-	sql, params := query.DeleteSQL()
-	log.Println(sql, params)
+	data := make(map[string]interface{})
+	data["username"] = "anothertestuser344"
+	data["password"] = "xxxxx"
+	result := query.Insert(data)
+	newId, _ := result.LastInsertId()
+	log.Println("Last Insert Id Is", newId)
+
 }

@@ -277,7 +277,7 @@ func (gomysql *GoMysql) GetSQL() (string, []interface{}) {
 /**
  * Insert Data Into Table Using Data
  */
-func (gomysql *GoMysql) Insert(data map[string]interface{}) {
+func (gomysql *GoMysql) Insert(data map[string]interface{}) sql.Result {
 	if gomysql.tableName == "" {
 		log.Fatal("Please Select Table Name")
 	}
@@ -293,11 +293,12 @@ func (gomysql *GoMysql) Insert(data map[string]interface{}) {
 		log.Fatal(err)
 	}
 	defer stmtIns.Close()
-	_, err = stmtIns.Exec(gomysql.GetMappedValues()...)
+	result, err := stmtIns.Exec(gomysql.GetMappedValues()...)
 	if err != nil {
 		log.Fatal(err)
 	}
 	//log.Println(sqlQuery, gomysql.dataValues)
+	return result
 }
 
 /**
@@ -316,7 +317,7 @@ func (gomysql *GoMysql) InsertSQL(data map[string]interface{}) (string, []interf
 /**
  * Update Data
  */
-func (gomysql *GoMysql) Update(data map[string]interface{}) {
+func (gomysql *GoMysql) Update(data map[string]interface{}) sql.Result {
 	if gomysql.tableName == "" {
 		log.Fatal("Please Select Table Name")
 	}
@@ -332,11 +333,11 @@ func (gomysql *GoMysql) Update(data map[string]interface{}) {
 		log.Fatal(err)
 	}
 	defer stmtIns.Close()
-	_, err = stmtIns.Exec(gomysql.GetMappedValues()...)
+	result, err := stmtIns.Exec(gomysql.GetMappedValues()...)
 	if err != nil {
 		log.Fatal(err)
 	}
-	//log.Println(sqlQuery, gomysql.GetMappedValues())
+	return result
 }
 
 /**
@@ -355,7 +356,7 @@ func (gomysql *GoMysql) UpdateSQL(data map[string]interface{}) (string, []interf
 /**
  * Delete Records From Mysql DataBase Table
  */
-func (gomysql *GoMysql) Delete() {
+func (gomysql *GoMysql) Delete() sql.Result {
 	if gomysql.tableName == "" {
 		log.Fatal("Please Select Table Name")
 	}
@@ -365,11 +366,12 @@ func (gomysql *GoMysql) Delete() {
 		log.Fatal(err)
 	}
 	defer stmtIns.Close()
-	_, err = stmtIns.Exec(gomysql.GetMappedValues()...)
+	result, err := stmtIns.Exec(gomysql.GetMappedValues()...)
 	if err != nil {
 		log.Fatal(err)
 	}
 	//log.Println(sqlQuery, gomysql.GetMappedValues())
+	return result
 }
 
 /**
