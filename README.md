@@ -9,6 +9,14 @@ GoMysql is a Google Go Language Based Database Wraper.Using this Package you can
 go get -u github.com/biswarupadhikari/gomysql
 ```
 
+## How to Test GoMysql
+
+```
+#Install GoMysql
+go get -u github.com/biswarupadhikari/gomysql
+#Run Tests
+go test github.com/biswarupadhikari/gomysql
+```
 ## Connect To Mysql database
 
 ```go
@@ -19,10 +27,13 @@ import (
 )
 
 //Connect Using Default PORT 3306
-db := gomysql.Connect("localhost", "DBUsername", "DBPassword", "DBName")
+db,err := gomysql.Connect("localhost", "DBUsername", "DBPassword", "DBName")
+if err!=nil{
+	log.Fatal("Failed to Connect to Database")
+}
 /**
  * Connect Using Alternative PORT AND Custom HOST
- * db := gomysql.Connect("example.com", "DBUsername", "DBPassword", "DBName", "9595")
+ * db,err := gomysql.Connect("example.com", "DBUsername", "DBPassword", "DBName", "9595")
  */
 ```
 

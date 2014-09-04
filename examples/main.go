@@ -7,7 +7,8 @@ import (
 
 func main() {
 	log.Println("GoMysql Testing App")
-	db := gomysql.Connect("localhost", "root", "rootwdp", "go", "3306")
+	db,err := gomysql.Connect("localhost", "root", "rootwdp", "go", "3306")
+	log.Println(db,err)
 	/**
 	 * Select Records
 	 */
@@ -125,10 +126,10 @@ func main() {
 	/**
 	 * Get Affected Rows after Delete
 	 */
-	query := db.GetQuery()
-	query.Table("users")
-	query.Where("id", ">=", 158)
-	result := query.Delete()
-	affectedRows, _ := result.RowsAffected()
-	log.Println("Affected Rows", affectedRows)
+	// query := db.GetQuery()
+	// query.Table("users")
+	// query.Where("id", ">=", 158)
+	// result := query.Delete()
+	// affectedRows, _ := result.RowsAffected()
+	// log.Println("Affected Rows", affectedRows)
 }

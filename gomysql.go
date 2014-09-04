@@ -27,8 +27,9 @@ type GoMysql struct {
  * host localhost
  * port 3306
  */
-func Connect(dbHost string, dbUsername string, dbPassword string, dbName string, params ...string) *GoMysql {
+func Connect(dbHost string, dbUsername string, dbPassword string, dbName string, params ...string) (*GoMysql,error) {
 	var dbPort string
+	gomysql := new(GoMysql)
 	if len(params) > 0 {
 		dbPort = params[0]
 	} else {
@@ -36,15 +37,14 @@ func Connect(dbHost string, dbUsername string, dbPassword string, dbName string,
 	}
 	db, err := sql.Open("mysql", dbUsername+":"+dbPassword+"@tcp("+dbHost+":"+dbPort+")/"+dbName)
 	if err != nil {
-		log.Fatal(err)
+		return gomysql,err
 	}
 	err = db.Ping()
 	if err != nil {
-		log.Fatal(err)
+		return gomysql,err
 	}
-	gomysql := new(GoMysql)
 	gomysql.db = db
-	return gomysql
+	return gomysql,nil
 }
 
 /**
