@@ -2,6 +2,7 @@
 
 GoMysql is a Google Go Language Based Database Wraper.Using this Package you can easily intract with mysql database from Go lang.
 
+[![Build Status](https://api.travis-ci.org/biswarupadhikari/gomysql.svg?branch=master)](https://travis-ci.org/biswarupadhikari/gomysql)
 
 ## How to Install GoMysql
 
