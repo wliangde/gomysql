@@ -3,10 +3,10 @@ import(
 "testing"
 )
 var(
-	DBHost="localhost"
+	DBHost="127.0.0.1"
 	DBUsername="root"
-	DBPassword="rootwdp"
-	DBName="go"
+	DBPassword=""
+	DBName="gomysql_test"
 	DBPort="3306"
 )
 func init(){
