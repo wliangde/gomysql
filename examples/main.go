@@ -8,22 +8,22 @@ import (
 func main() {
 	log.Println("GoMysql Testing App")
 	db,err := gomysql.Connect("localhost", "root", "rootwdp", "go", "3306")
-	sqlQuery:=	`
-	  CREATE TABLE IF NOT EXISTS test_users (
-	  id int(11) NOT NULL AUTO_INCREMENT,
-	  username varchar(250) NOT NULL,
-	  password varchar(250) NOT NULL,
-	  PRIMARY KEY (id),
-	  UNIQUE KEY username (username)
-	) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-	`
-	res,err:=db.Query("INSERT INTO test_users VALUES(?,?,?)",15,"biswarupadhikari","secret")
-	if err!=nil{
-		log.Fatal(err)
-	}else{
-		log.Println("Table Created",sqlQuery)
-	}
-	log.Println(res)
+	// sqlQuery:=	`
+	//   CREATE TABLE IF NOT EXISTS test_users (
+	//   id int(11) NOT NULL AUTO_INCREMENT,
+	//   username varchar(250) NOT NULL,
+	//   password varchar(250) NOT NULL,
+	//   PRIMARY KEY (id),
+	//   UNIQUE KEY username (username)
+	// ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+	// `
+	// res,err:=db.Query("INSERT INTO test_users VALUES(?,?,?)",15,"biswarupadhikari","secret")
+	// if err!=nil{
+	// 	log.Fatal(err)
+	// }else{
+	// 	log.Println("Table Created",sqlQuery)
+	// }
+	// log.Println(res)
 	log.Println(db,err)
 	/**
 	 * Select Records
@@ -56,11 +56,11 @@ func main() {
 	/**
 	 * Delete Records
 	 */
-	// db.Table("users").Where("id", "=", 155).Delete()
+	// db.Table("users").Where("id", "=", 1).Delete()
 	/**
 	 * Select All Records
 	 */
-	// rows := db.Select("id,username,password").From("users").Where("id", ">", 7).Get()
+	// rows,_ := db.Select("id,username,password").From("users").Where("id", ">", 0).Get()
 	// log.Println(rows)
 	// log.Println(db.Select("id").Get())
 	// //log.Println(db.Get())
@@ -72,7 +72,7 @@ func main() {
 	// query.Select("*")
 	// query.From("users as u")
 	// query.Join("LEFT", "roles as r", "u.role_id=r.id")
-	// rows := query.Get()
+	// rows,_ := query.Get()
 	// log.Println(rows)
 	/**
 	 * Left Join With Condition

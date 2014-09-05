@@ -42,7 +42,10 @@ if err!=nil{
 
 
 ```go
-users:=db.Select("*").From("users").Get()
+users,err:=db.Select("*").From("users").Get()
+if err!=nil{
+	log.Fatal(err)
+}
 for i:=0;i<len(users);i++{
 	user:=users[i]
 	log.Println("Id => ",user["id"]," || Username ",user["username"])
@@ -54,7 +57,10 @@ for i:=0;i<len(users);i++{
 
 
 ```go
-users:=db.Select("id,username").From("users").Get()
+users,err:=db.Select("id,username").From("users").Get()
+if err!=nil{
+	log.Fatal(err)
+}
 for i:=0;i<len(users);i++{
 	user:=users[i]
 	log.Println("Id => ",user["id"]," || Username ",user["username"])
@@ -66,7 +72,10 @@ for i:=0;i<len(users);i++{
 
 
 ```go
-users:=db.Select("id,username").From("users").Where("id","=",157).Get()
+users,err:=db.Select("id,username").From("users").Where("id","=",157).Get()
+if err!=nil{
+	log.Fatal(err)
+}
 for i:=0;i<len(users);i++{
 	user:=users[i]
 	log.Println("Id => ",user["id"]," || Username ",user["username"])
@@ -78,7 +87,10 @@ for i:=0;i<len(users);i++{
 
 
 ```go
-users:=db.Select("id,username").From("users").Where("username","=","userone").Where("password","=","secret").Get()
+users,err:=db.Select("id,username").From("users").Where("username","=","userone").Where("password","=","secret").Get()
+if err!=nil{
+	log.Fatal(err)
+}
 for i:=0;i<len(users);i++{
 	user:=users[i]
 	log.Println("Id => ",user["id"]," || Username ",user["username"])
@@ -89,7 +101,10 @@ for i:=0;i<len(users);i++{
 
 
 ```go
-users:=db.Select("id,username").From("users").Where("role","=","administrator").ORWhere("role","=","superadmin").Get()
+users,err:=db.Select("id,username").From("users").Where("role","=","administrator").ORWhere("role","=","superadmin").Get()
+if err!=nil{
+	log.Fatal(err)
+}
 for i:=0;i<len(users);i++{
 	user:=users[i]
 	log.Println("Id => ",user["id"]," || Username ",user["username"])
@@ -101,7 +116,10 @@ for i:=0;i<len(users);i++{
 
 
 ```go
-users:=db.Select("id,username").From("users").RawWhere("role=? OR role=?","administrator","superadmin").Get()
+users,err:=db.Select("id,username").From("users").RawWhere("role=? OR role=?","administrator","superadmin").Get()
+if err!=nil{
+	log.Fatal(err)
+}
 for i:=0;i<len(users);i++{
 	user:=users[i]
 	log.Println("Id => ",user["id"]," || Username ",user["username"])
@@ -138,7 +156,10 @@ data["username"] = "biswarupadhikari"
 data["password"] = "mysecretpass"
 data["age"] = 27
 db.Table("users").Insert(data)
-result := query.Insert(data)
+result,err := query.Insert(data)
+if err!=nil{
+	log.Fatal(err)
+}
 newId, _ := result.LastInsertId()
 log.Println("Last Insert Id Is", newId)
 //SQL OUTPUT => INSERT INTO users(username,password,age) VALUES("biswarupadhikari","mysecretpass",27)
@@ -172,7 +193,10 @@ log.Println("Record Updated")
 ```go
 data := make(map[string]interface{})
 data["password"] = "new Password"
-result:=db.Table("users").Where("id", ">", 2).Update(data)
+result,err:=db.Table("users").Where("id", ">", 2).Update(data)
+if err!=nil{
+	log.Fatal(err)
+}
 affectedRows,_:=result.RowsAffected()
 log.Println("Affected Rows",affectedRows)
 //SQL OUTPUT => UPDATE users SET password="new Password" WHERE id > 2
@@ -189,11 +213,44 @@ log.Println("Record Deleted")
 ## Get Affected Rows after Delete
 
 ```go
-result:=db.Table("users").Where("id", ">", 2).Delete()
+result,err:=db.Table("users").Where("id", ">", 2).Delete()
+if err!=nil{
+	log.Fatal(err)
+}
 affectedRows,_:=result.RowsAffected()
 log.Println("Affected Rows",affectedRows)
 //SQL OUTPUT => DELETE FROM users WHERE id > 158
 ```
-### Authors and Contributors
 
-@biswarupadhikari Biswarup Adhikari.
+
+## Run Custom Query
+
+
+```go
+result,err := db.Query("<YOUR CUSTOM SQL QUERY>")
+if err!=nil{
+	log.Fatal(err)
+}
+//Do Something with result
+```
+
+## Run Custom Query Insert Data Process 1
+
+```go
+result,err := db.Query("INSERT INTO users(username,password,age) VALUES("biswarupadhikari","mysecretpass",27)")
+if err!=nil{
+	log.Fatal(err)
+}
+newId, _ := result.LastInsertId()
+log.Println("Last Insert Id Is", newId)
+```
+## Run Custom Query Insert Data Process 2
+
+```go
+result,err := db.Query("INSERT INTO users(username,password,age) VALUES(?,?,?)","biswarupadhikari","mysecretpass",27)
+if err!=nil{
+	log.Fatal(err)
+}
+newId, _ := result.LastInsertId()
+log.Println("Last Insert Id Is", newId)
+```
