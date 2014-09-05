@@ -405,3 +405,17 @@ func (gomysql *GoMysql) Delete() sql.Result {
 func (gomysql *GoMysql) DeleteSQL() (string, []interface{}) {
 	return gomysql.generateDeleteSQL(), gomysql.GetMappedValues()
 }
+
+/**
+ * Run Custom Query
+ */
+func (gomysql *GoMysql) Query(sqlQuery string,args ...interface{})(sql.Result,error){
+	var result sql.Result
+	var err error
+	result, err = gomysql.db.Exec(sqlQuery,args...)
+	if err != nil {
+		return result,err
+	}
+	gomysql.lastResult = result
+	return result,nil
+}
