@@ -65,7 +65,13 @@ func (gomysql *GoMysql) Select(fields string) *GoMysql {
 	}
 	return gomysql
 }
-
+/**
+ * Clear Select
+ */
+func (gomysql *GoMysql) ClearSelect() *GoMysql {
+	gomysql.fields=gomysql.fields[:0]
+	return gomysql
+}
 /**
  * Select From a Table
  */
@@ -82,7 +88,14 @@ func (gomysql *GoMysql) Where(key string, operator string, dataValue interface{}
 	gomysql.conditionValues = append(gomysql.conditionValues, dataValue)
 	return gomysql
 }
-
+/**
+ * Clear Where
+ */
+func (gomysql *GoMysql) ClearWhere() *GoMysql {
+	gomysql.conditions=gomysql.conditions[:0]
+	gomysql.conditionValues=gomysql.conditionValues[:0]
+	return gomysql
+}
 /**
  * Add OR Where Conditions
  */
