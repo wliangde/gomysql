@@ -15,7 +15,9 @@ var (
 )
 
 var (
-	db *GoMysql
+	db                     *GoMysql
+	testUserTableName      string
+	testUserTableCreateSQL string
 )
 
 /**
@@ -38,6 +40,19 @@ func init() {
 	DBPassword = getConfig("GOMYSQL_TEST_PASSWORD", "")
 	DBName = getConfig("GOMYSQL_TEST_DBNAME", "gomysql_test")
 	DBPort = getConfig("GOMYSQL_TEST_DBPORT", "3306")
+	//Seeting test user Table Name
+	testUserTableName = getConfig("GOMYSQL_TEST_USERS_TABLE", "gomysql_test_users")
+	//Create User Table Sql Query
+	testUserTableCreateSQL = `
+    CREATE TABLE IF NOT EXISTS ` + testUserTableName + ` (
+      id int(11) NOT NULL AUTO_INCREMENT,
+      username varchar(250) NOT NULL,
+      password varchar(250) NOT NULL,
+      PRIMARY KEY (id),
+      UNIQUE KEY username (username)
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+    `
+	//log.Fatal(testUserTableCreateSQL)
 }
 
 /**
@@ -189,23 +204,14 @@ func TestClearWhere(t *testing.T) {
  * Test Query Using Create Table
  */
 func TestQueryCreateTable(t *testing.T) {
-	sqlQuery := `
-    CREATE TABLE IF NOT EXISTS test_users (
-    id int(11) NOT NULL AUTO_INCREMENT,
-    username varchar(250) NOT NULL,
-    password varchar(250) NOT NULL,
-    PRIMARY KEY (id),
-    UNIQUE KEY username (username)
-  ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-  `
-	_, err := db.Query(sqlQuery)
+	_, err := db.Query(testUserTableCreateSQL)
 	if err != nil {
 		t.Error("Table Create Failed")
 	} else {
 		t.Log("test users Table created or exists")
 	}
 	//Check Table is Exist or not
-	_, err = db.Query("DESC test_users")
+	_, err = db.Query("DESC " + testUserTableName)
 	if err != nil {
 		t.Error("Table not Exist After Create")
 	} else {
@@ -217,25 +223,16 @@ func TestQueryCreateTable(t *testing.T) {
  * Test Query Using Drop Table
  */
 func TestQueryDropTable(t *testing.T) {
-	sqlQuery := `
-    CREATE TABLE IF NOT EXISTS test_users (
-    id int(11) NOT NULL AUTO_INCREMENT,
-    username varchar(250) NOT NULL,
-    password varchar(250) NOT NULL,
-    PRIMARY KEY (id),
-    UNIQUE KEY username (username)
-  ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-  `
-	db.Query(sqlQuery)
+	db.Query(testUserTableCreateSQL)
 	//Drop Table
-	_, err := db.Query("DROP TABLE test_users")
+	_, err := db.Query("DROP TABLE " + testUserTableName)
 	if err != nil {
 		t.Error("Error droping Table")
 	} else {
 		t.Log("Table Dropped")
 	}
 	//Confirm Table Dropped or Not
-	_, err = db.Query("DESC test_users")
+	_, err = db.Query("DESC " + testUserTableName)
 	if err != nil {
 		t.Log("Confirmed Table Droped")
 	} else {
@@ -247,18 +244,9 @@ func TestQueryDropTable(t *testing.T) {
  * Test Query Using Insert Table
  */
 func TestQueryInsertIntoTable(t *testing.T) {
-	sqlQuery := `
-    CREATE TABLE IF NOT EXISTS test_users (
-    id int(11) NOT NULL AUTO_INCREMENT,
-    username varchar(250) NOT NULL,
-    password varchar(250) NOT NULL,
-    PRIMARY KEY (id),
-    UNIQUE KEY username (username)
-  ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-  `
-	db.Query(sqlQuery)
+	db.Query(testUserTableCreateSQL)
 	//Run Insert Query
-	result, err := db.Query("INSERT INTO test_users(id,username,password) VALUES(14599,'biswarupadhikari','secret')")
+	result, err := db.Query("INSERT INTO " + testUserTableName + "(id,username,password) VALUES(14599,'biswarupadhikari','secret')")
 	if err != nil {
 		t.Error("Insert Data into test_users table failed")
 	} else {
