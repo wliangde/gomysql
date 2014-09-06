@@ -254,3 +254,22 @@ if err!=nil{
 newId, _ := result.LastInsertId()
 log.Println("Last Insert Id Is", newId)
 ```
+
+## Display Table Structure OR Display Rows using QueryRows
+
+```go
+rows,err:=db.QueryRows("DESC test_users")
+if err!=nil{
+	log.Fatal("Table Not Exist")
+}
+for rows.Next(){
+	var Field string
+	var Type string
+	var Null string
+	var Key string
+	var Default string
+	var Extra string
+	err=rows.Scan(&Field,&Type,&Null,&Key,&Default,&Extra)
+	log.Println(Field,Type,Null,Key,Default,Extra)
+}
+```

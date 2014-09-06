@@ -7,7 +7,7 @@ import (
 
 func main() {
 	log.Println("GoMysql Testing App")
-	db,err := gomysql.Connect("localhost", "root", "rootwdp", "go", "3306")
+	db, err := gomysql.Connect("localhost", "root", "rootwdp", "go", "3306")
 	// sqlQuery:=	`
 	//   CREATE TABLE IF NOT EXISTS test_users (
 	//   id int(11) NOT NULL AUTO_INCREMENT,
@@ -24,7 +24,7 @@ func main() {
 	// 	log.Println("Table Created",sqlQuery)
 	// }
 	// log.Println(res)
-	log.Println(db,err)
+	log.Println(db, err)
 	/**
 	 * Select Records
 	 */
@@ -148,4 +148,21 @@ func main() {
 	// result := query.Delete()
 	// affectedRows, _ := result.RowsAffected()
 	// log.Println("Affected Rows", affectedRows)
+	/**
+	 * Display Table Structure
+	 */
+	rows, err := db.QueryRows("DESC test_users")
+	if err != nil {
+		log.Fatal("Table Not Exist")
+	}
+	for rows.Next() {
+		var Field string
+		var Type string
+		var Null string
+		var Key string
+		var Default string
+		var Extra string
+		err = rows.Scan(&Field, &Type, &Null, &Key, &Default, &Extra)
+		log.Println(Field, Type, Null, Key, Default, Extra)
+	}
 }
