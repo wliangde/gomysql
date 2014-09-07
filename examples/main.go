@@ -8,6 +8,9 @@ import (
 func main() {
 	log.Println("GoMysql Testing App")
 	db, err := gomysql.Connect("localhost", "root", "rootwdp", "go", "3306")
+	if err!=nil{
+		log.Fatal(err)
+	}
 	// sqlQuery:=	`
 	//   CREATE TABLE IF NOT EXISTS test_users (
 	//   id int(11) NOT NULL AUTO_INCREMENT,
@@ -24,7 +27,7 @@ func main() {
 	// 	log.Println("Table Created",sqlQuery)
 	// }
 	// log.Println(res)
-	log.Println(db, err)
+	//log.Println(db, err)
 	/**
 	 * Select Records
 	 */
@@ -151,18 +154,43 @@ func main() {
 	/**
 	 * Display Table Structure
 	 */
-	rows, err := db.QueryRows("DESC test_users")
-	if err != nil {
-		log.Fatal("Table Not Exist")
+	// rows, err := db.QueryRows("DESC test_users")
+	// if err != nil {
+	// 	log.Fatal("Table Not Exist")
+	// }
+	// for rows.Next() {
+	// 	var Field string
+	// 	var Type string
+	// 	var Null string
+	// 	var Key string
+	// 	var Default string
+	// 	var Extra string
+	// 	err = rows.Scan(&Field, &Type, &Null, &Key, &Default, &Extra)
+	// 	log.Println(Field, Type, Null, Key, Default, Extra)
+	// }
+	/**
+	 * Create Schema
+	 */
+	table:=db.Schema("gomysql_users_table")
+	table.Increment("id")
+	table.Varchar("username").Size("150").Unique()
+	table.Varchar("email").Size("150").Unique()
+	table.Varchar("password").Size("50")
+	table.String("aboutme").Default("I am a Programmer")
+	table.Enum("sex").Size("'Male','Female','Other'")
+	log.Println(table.CreateSQL())
+	_,err=table.Create()
+	if err!=nil{
+		log.Fatal(err)
+	}else{
+		log.Println("Table Created")
 	}
-	for rows.Next() {
-		var Field string
-		var Type string
-		var Null string
-		var Key string
-		var Default string
-		var Extra string
-		err = rows.Scan(&Field, &Type, &Null, &Key, &Default, &Extra)
-		log.Println(Field, Type, Null, Key, Default, Extra)
-	}
+	/**
+	 * Drop Schema
+	 */
+	//db.Schema("gomysql_users_table").Drop()
+	/**
+	 * Rename Tabel Name
+	 */
+	db.Schema("gomysql_users_table").Rename("my_new_table")
 }

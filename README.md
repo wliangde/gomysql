@@ -273,3 +273,61 @@ for rows.Next(){
 	log.Println(Field,Type,Null,Key,Default,Extra)
 }
 ```
+
+
+## Create Schema or Table 
+
+```go
+table:=db.Schema("gomysql_users_table")
+table.Increment("id")
+table.Varchar("username").Size("150").Unique()
+table.Varchar("email").Size("150").Unique()
+table.Varchar("password").Size("50")
+table.String("aboutme").Default("I am a Programmer")
+table.Enum("sex").Size("'Male','Female','Other'")
+_,err=table.Create()
+if err!=nil{
+	log.Fatal(err)
+}else{
+	log.Println("Table Created")
+}
+//If u want to Get Genearted SQL sql:=table.CreateSQL()
+/**
+ * SQL OUTPUT
+ *  CREATE TABLE IF NOT EXISTS gomysql_users_table(
+ *  	id Int(11) NOT NULL  AUTO_INCREMENT,
+ *  	username Varchar(150) NOT NULL,
+ *  	email Varchar(150) NOT NULL,
+ *  	password Varchar(50) NOT NULL,
+ *  	aboutme Varchar(255) NOT NULL DEFAULT 'I am a Programmer',
+ *  	sex enum('Male','Female','Other') NOT NULL,
+ *  	PRIMARY KEY (id),
+ *  	UNIQUE KEY username (username),
+ *  	UNIQUE KEY email (email)
+ *	)  ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+ */
+```
+
+## Drop Schema Or Table 
+
+```go
+_,err=db.Schema("gomysql_users_table").Drop()
+if err!=nil{
+	log.Fatal(err)
+}else{
+	log.Println("Table Dropped")
+}
+//SQL OUTPUT DROP TABLE gomysql_users_table
+```
+
+## Rename Schema or Change Table Name
+
+```go
+_,err=db.Schema("gomysql_users_table").Rename("YourNewTableName")
+if err!=nil{
+	log.Fatal(err)
+}else{
+	log.Println("Table Renamed")
+}
+//SQL OUTPUT RENAME TABLE gomysql_users_table TO YourNewTableName
+```
