@@ -17,6 +17,7 @@ type SchemaField struct{
 	FieldIsIndexKey bool
 	FieldDefaultValue string
 	Extra string
+	schema *Schema
 }
 /**
  * Tbale Schema Structure
@@ -90,6 +91,7 @@ func(schemaField *SchemaField) Size(sizeValues string)(*SchemaField){
  */
 func(schema *Schema) Increment(name string)(*SchemaField){
 	schemaField:=new(SchemaField)
+	schemaField.schema=schema
 	schemaField.FieldName=name
 	schemaField.FieldType="Int"
 	schemaField.FieldSize="11"
@@ -104,6 +106,7 @@ func(schema *Schema) Increment(name string)(*SchemaField){
  */
 func(schema *Schema) Int(name string)(*SchemaField){
 	schemaField:=new(SchemaField)
+	schemaField.schema=schema
 	schemaField.FieldName=name
 	schemaField.FieldType="Int"
 	schemaField.FieldSize="11"
@@ -116,6 +119,7 @@ func(schema *Schema) Int(name string)(*SchemaField){
  */
 func(schema *Schema) Varchar(name string)(*SchemaField){
 	schemaField:=new(SchemaField)
+	schemaField.schema=schema
 	schemaField.FieldName=name
 	schemaField.FieldType="Varchar"
 	schemaField.FieldSize="255"
@@ -134,8 +138,9 @@ func(schema *Schema) String(name string)(*SchemaField){
  */
 func(schema *Schema) Enum(name string)(*SchemaField){
 	schemaField:=new(SchemaField)
+	schemaField.schema=schema
 	schemaField.FieldName=name
-	schemaField.FieldType="enum"
+	schemaField.FieldType="ENUM"
 	schemaField.FieldSize=""
 	schemaField.FieldIsNull=false
 	schema.fields=append(schema.fields,schemaField)
@@ -212,4 +217,55 @@ func(schema *Schema) Drop()(sql.Result, error){
  */
 func(schema *Schema) Rename(newTableName string)(sql.Result, error){
 	return schema.db.Query("RENAME TABLE "+schema.name+" TO "+newTableName)
+}
+/**
+ * Generate AddColumn SQL
+ */
+func(schemaField *SchemaField)AddColumnSQL(params ...string)string{
+	sqlQuery:="ALTER TABLE "+schemaField.schema.name+" ADD "
+	sqlQuery+=schemaField.FieldName+" "+schemaField.FieldType+"("+schemaField.FieldSize+")"
+	if(schemaField.FieldIsNull){
+		sqlQuery+=" NULL"
+	}else{
+		sqlQuery+=" NOT NULL"
+	}
+	if schemaField.FieldDefaultValue!=""{
+		sqlQuery+=" DEFAULT '"+schemaField.FieldDefaultValue+"'"
+	}
+	if len(params)==1{
+		sqlQuery+=" FIRST "
+	}
+	if len(params)==2{
+		sqlQuery+=" AFTER "+params[1]
+	}
+	sqlQuery+=",\n"
+	if schemaField.FieldIsPrimaryKey{
+		sqlQuery+="ADD PRIMARY KEY("+schemaField.FieldName+"),\n"
+	}
+	if schemaField.FieldIsUniqueKey{
+		sqlQuery+="ADD UNIQUE KEY("+schemaField.FieldName+"),\n"
+	}
+	if schemaField.FieldIsIndexKey{
+		sqlQuery+="ADD INDEX("+schemaField.FieldName+"),\n"
+	}
+	sqlQuery=strings.TrimRight(sqlQuery,",\n")+";\n"
+	return sqlQuery
+}
+/**
+ * Add Column To Table
+ */
+func(schemaField *SchemaField)AddColumn(params ...string)(sql.Result, error){
+	return schemaField.schema.db.Query(schemaField.AddColumnSQL(params ...))
+}
+/**
+ * Add Column To Table After Some COlumn
+ */
+func(schemaField *SchemaField)AddColumnFirst()(sql.Result, error){
+	return schemaField.schema.db.Query(schemaField.AddColumnSQL("FIRST"))
+}
+/**
+ * Add Column To Table After Some COlumn
+ */
+func(schemaField *SchemaField)AddColumnAfter(afterColumnName string)(sql.Result, error){
+	return schemaField.schema.db.Query(schemaField.AddColumnSQL("AFTER",afterColumnName))
 }

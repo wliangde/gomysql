@@ -331,3 +331,16 @@ if err!=nil{
 }
 //SQL OUTPUT RENAME TABLE gomysql_users_table TO YourNewTableName
 ```
+## Add Extra Column After Creating Table
+```go
+//Add Column At the End
+db.Schema("gomysql_users_table").Int("age").Size("3").AddColumn()
+//Add Column At the First
+db.Schema("gomysql_users_table").Int("age").Size("3").AddColumnFirst()
+//Add Column After Column
+db.Schema("gomysql_users_table").Int("age").Size("3").AddColumnAfter("username")
+//Add Column enum example
+db.Schema("gomysql_users_table").Int("status").Size("'Active','Inactive'").AddColumn()
+//Add Unique Column
+db.Schema("gomysql_users_table").Varchar("fbid").Size("150").Unique().AddColumn()
+```
