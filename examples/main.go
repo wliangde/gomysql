@@ -8,7 +8,7 @@ import (
 func main() {
 	log.Println("GoMysql Testing App")
 	db, err := gomysql.Connect("localhost", "root", "rootwdp", "go", "3306")
-	if err!=nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 	// sqlQuery:=	`
@@ -175,7 +175,7 @@ func main() {
 	/**
 	 * Create Schema
 	 */
-	table:=db.Schema("gomysql_users_table")
+	table := db.Schema("gomysql_users_table")
 	table.Increment("id")
 	table.Varchar("username").Size("150").Unique()
 	table.Varchar("email").Size("150").Unique()
@@ -188,10 +188,10 @@ func main() {
 	table.TinyInt("test2").Default("15")
 	table.TimeStamp("tesasasadasd").Default("CURRENT_TIMESTAMP")
 	log.Println(table.CreateSQL())
-	_,err=table.Create()
-	if err!=nil{
+	_, err = table.Create()
+	if err != nil {
 		log.Fatal(err)
-	}else{
+	} else {
 		log.Println("Table Created")
 	}
 	/**
