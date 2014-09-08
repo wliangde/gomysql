@@ -355,7 +355,7 @@ func(schema *Schema) CreateSQL()string{
 			IndexKeys=append(IndexKeys,field.FieldName)
 		}
 		fieldSQL+=field.FieldName+" "+field.FieldType
-		if(field.FieldSize!=""){
+		if field.FieldSize!=""{
 			fieldSQL+="("+field.FieldSize+")"
 		}
 		if(field.FieldIsNull){
@@ -364,7 +364,7 @@ func(schema *Schema) CreateSQL()string{
 			fieldSQL+=" NOT NULL"
 		}
 		if field.FieldDefaultValue!=""{
-			fieldSQL+=" DEFAULT '"+field.FieldDefaultValue+"'"
+			fieldSQL+=" DEFAULT "+field.FieldDefaultValue
 		}
 		if schema.autoIncrement==field.FieldName{
 			fieldSQL+="  AUTO_INCREMENT"
@@ -421,7 +421,7 @@ func(schemaField *SchemaField)AddColumnSQL(params ...string)string{
 		sqlQuery+=" NOT NULL"
 	}
 	if schemaField.FieldDefaultValue!=""{
-		sqlQuery+=" DEFAULT '"+schemaField.FieldDefaultValue+"'"
+		sqlQuery+=" DEFAULT "+schemaField.FieldDefaultValue+""
 	}
 	if len(params)==1{
 		sqlQuery+=" FIRST "

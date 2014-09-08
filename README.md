@@ -283,7 +283,7 @@ table.Increment("id")
 table.Varchar("username").Size("150").Unique()
 table.Varchar("email").Size("150").Unique()
 table.Varchar("password").Size("50")
-table.String("aboutme").Default("I am a Programmer")
+table.String("aboutme").Default("'I am a Programmer'")
 table.Enum("sex").Size("'Male','Female','Other'")
 _,err=table.Create()
 if err!=nil{
