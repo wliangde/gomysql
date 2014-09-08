@@ -184,6 +184,8 @@ func main() {
 	table.Text("content")
 	table.Date("dob")
 	table.Enum("sex").Size("'Male','Female','Other'")
+	table.SmallInt("test")
+	table.TinyInt("test2")
 	log.Println(table.CreateSQL())
 	_,err=table.Create()
 	if err!=nil{
