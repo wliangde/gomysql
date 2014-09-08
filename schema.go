@@ -134,6 +134,35 @@ func(schema *Schema) String(name string)(*SchemaField){
 	return schema.Varchar(name)
 }
 /**
+ * Create Text Field
+ */
+func(schema *Schema) Text(name string)(*SchemaField){
+	schemaField:=new(SchemaField)
+	schemaField.schema=schema
+	schemaField.FieldName=name
+	schemaField.FieldType="Text"
+	schemaField.FieldSize=""
+	schemaField.FieldIsNull=false
+	schema.fields=append(schema.fields,schemaField)
+	return schemaField
+}
+/**
+ * Create Date TextField
+ */
+/**
+ * Create Text Field
+ */
+func(schema *Schema) Date(name string)(*SchemaField){
+	schemaField:=new(SchemaField)
+	schemaField.schema=schema
+	schemaField.FieldName=name
+	schemaField.FieldType="DATE"
+	schemaField.FieldSize=""
+	schemaField.FieldIsNull=false
+	schema.fields=append(schema.fields,schemaField)
+	return schemaField
+}
+/**
  * Create Enum Field
  */
 func(schema *Schema) Enum(name string)(*SchemaField){
@@ -166,7 +195,10 @@ func(schema *Schema) CreateSQL()string{
 		if field.FieldIsIndexKey{
 			IndexKeys=append(IndexKeys,field.FieldName)
 		}
-		fieldSQL+=field.FieldName+" "+field.FieldType+"("+field.FieldSize+")"
+		fieldSQL+=field.FieldName+" "+field.FieldType
+		if(field.FieldSize!=""){
+			fieldSQL+="("+field.FieldSize+")"
+		}
 		if(field.FieldIsNull){
 			fieldSQL+=" NULL"
 		}else{

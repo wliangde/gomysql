@@ -169,22 +169,28 @@ func main() {
 	// 	log.Println(Field, Type, Null, Key, Default, Extra)
 	// }
 	/**
+	 * Drop Table
+	 */
+	db.Schema("gomysql_users_table").Drop()
+	/**
 	 * Create Schema
 	 */
-	// table:=db.Schema("gomysql_users_table")
-	// table.Increment("id")
-	// table.Varchar("username").Size("150").Unique()
-	// table.Varchar("email").Size("150").Unique()
-	// table.Varchar("password").Size("50")
-	// table.String("aboutme").Default("I am a Programmer")
-	// table.Enum("sex").Size("'Male','Female','Other'")
-	// //log.Println(table.CreateSQL())
-	// _,err=table.Create()
-	// if err!=nil{
-	// 	log.Fatal(err)
-	// }else{
-	// 	log.Println("Table Created")
-	// }
+	table:=db.Schema("gomysql_users_table")
+	table.Increment("id")
+	table.Varchar("username").Size("150").Unique()
+	table.Varchar("email").Size("150").Unique()
+	table.Varchar("password").Size("50")
+	table.String("aboutme").Default("I am a Programmer")
+	table.Text("content")
+	table.Date("dob")
+	table.Enum("sex").Size("'Male','Female','Other'")
+	log.Println(table.CreateSQL())
+	_,err=table.Create()
+	if err!=nil{
+		log.Fatal(err)
+	}else{
+		log.Println("Table Created")
+	}
 	/**
 	 * Drop Schema
 	 */
@@ -204,8 +210,8 @@ func main() {
 	//_,err=db.Schema("gomysql_users_table").Varchar("body2").Size("300").Unique().Default("Test Content").AddColumn()
 	//_,err=db.Schema("gomysql_users_table").Enum("se2x").Size("'Male','Female','Other'").AddColumn("After","username")
 	//_,err=db.Schema("gomysql_users_table").Enum("status").Size("'Active','Inactive'").AddColumn()
-	_,err=db.Schema("gomysql_users_table").Varchar("fbid").Size("150").Unique().AddColumn()
-	if err!=nil{
-		log.Fatal(err)
-	}
+	// _,err=db.Schema("gomysql_users_table").Varchar("fbid").Size("150").Unique().AddColumn()
+	// if err!=nil{
+	// 	log.Fatal(err)
+	// }
 }
