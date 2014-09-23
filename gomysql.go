@@ -337,6 +337,7 @@ _ "log"
  		return result, err
  	}
  	gomysql.lastResult = result
+ 	gomysql.RessetQuery()
  	return result, nil
  }
 
@@ -376,6 +377,7 @@ _ "log"
  		return result, err
  	}
  	gomysql.lastResult = result
+ 	gomysql.RessetQuery()
  	return result, nil
  }
 
@@ -407,6 +409,7 @@ _ "log"
  		return result, err
  	}
  	gomysql.lastResult = result
+ 	gomysql.RessetQuery()
  	return result, nil
  }
 
